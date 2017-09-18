@@ -1,0 +1,14 @@
+17484ac5c24242c2623e7c3aad124ace *DESCRIPTION
+53e3e19e2ac213abd448389f44fa060c *NAMESPACE
+845dd5955620517ce51249fa7c5fb18a *R/tsgui.R
+628e44586422005336cafe5d97cc68f6 *R/zzz.R
+832aae96d0c12b7fc4f168acc9c94284 *inst/CITATION
+809b2e5d6f5aa52ff5d51156c2b4d9e1 *man/arma.model.Rd
+d39e030cddfe4b99d2fd9c301d3f259f *man/garch.model.Rd
+d41d8cd98f00b204e9800998ecf8427e *man/macros/defn.Rd
+ba67857a5e592cd3071523af5fbbc0ba *man/tsgui.Rd
+20508dff186ecbc83b9aa947fcea70c5 *src/Makevars
+d41d8cd98f00b204e9800998ecf8427e *src/tsgui.cc
+d41d8cd98f00b204e9800998ecf8427e *src/tsgui.h
+2c2eaab7d9c8f4a941412ed273e4e5bb *src/zzz.c
+d41d8cd98f00b204e9800998ecf8427e *src/zzz.h

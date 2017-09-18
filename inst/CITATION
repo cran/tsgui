@@ -1,0 +1,15 @@
+citHeader("To cite 'tsgui' in publications use:")
+
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype="Manual",
+         header="For general purposes please refer to",
+         footer="",
+         title = "{tsgui} : a gui for simuling time series",
+         author = c(person("Martin", "Schlather", role=c("cre", "aut"))
+	     ),
+         year = year,
+         note = note,
+         url = "https://cran.r-project.org/package=tsgui"
+         )

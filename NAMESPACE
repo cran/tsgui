@@ -1,0 +1,16 @@
+
+#exportPattern("^[^\\.]")
+export(tsgui, ARMA.model, GARCH.model)
+
+
+import("graphics")
+import("methods")
+import("grDevices")
+import("stats")
+import("tcltk2")
+##import("utils")
+importFrom('RandomFieldsUtils', Print, sleep.micro)
+
+
+S3method(print, tsgui)
+S3method(str, tsgui)
