@@ -6,7 +6,7 @@ note <- sprintf("R package version %s", meta$Version)
 bibentry(bibtype="Manual",
          header="For general purposes please refer to",
          footer="",
-         title = "{tsgui} : a gui for simuling time series",
+         title = "{tsgui} : A Gui for Simulating Time Series",
          author = c(person("Martin", "Schlather", role=c("cre", "aut"))
 	     ),
          year = year,

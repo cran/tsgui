@@ -3,7 +3,7 @@
 ## Martin Schlather, schlather@math.uni-mannheim.de
 ##
 ##
-## Copyright (C) 2017 -- 2017 Martin Schlather
+## Copyright (C) 2017 -- 2019 Martin Schlather
 ##
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 }
 
 .onAttach <- function (lib, pkg) {
-#  packageStartupMessage("This is tsgui Version: 0.0.3");
+#  packageStartupMessage();
 }
 
 .onDetach <- function(lib) {

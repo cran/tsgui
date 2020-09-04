@@ -1,5 +1,5 @@
 
-print.tsgui <- function(x,...) {
+print.tsgui <- function(x,..., details=FALSE) {
   n <- names(x) 
   idx <- sapply(strsplit(n, ".mi"), length) > 1 |
          sapply(strsplit(n, ".ma"), length) > 1 |
@@ -7,7 +7,8 @@ print.tsgui <- function(x,...) {
   name <- attr(x, "model")
   if (!is.null(name)) cat("'", name, "' is a ")
   class(x) <- NULL
-  utils::str(x[!idx], ..., give.attr=FALSE) ##
+  if (details) base::print(x)
+  else utils::str(x[!idx], ..., give.attr=FALSE) ##
 }
 
 str.tsgui <- function(object, ..., give.attr=FALSE) {
@@ -85,7 +86,7 @@ ARMA.model <- function(p.max=3, q.max=3) {
 	paste(if (!outside) "not all ",
 	      "roots of phi (", paste(r.txt, collapse=";"),
 	      ") outside unit circle, i.e. ", if (!outside) "non-",
-	      "stationary", sep="")
+	      "causal", sep="")
       }
     }),
 
@@ -335,8 +336,11 @@ tsgui.intern <- function(currentClass,
   width.slider <- 15L ## 18L
   length.slider <- 170L
   length.slider.main <- 130L
-  plothscale <- 0.8    # Horizontal scaling
-  plotvscale <- 0.8    # Vertical scaling
+  plothscale <- 1.6    # Horizontal scaling, defines real size of image
+  plotvscale <- 1.6    # Vertical scaling, defines real size of image
+
+ ## plothscale <- 2.5
+  
   importance <- rep(2, 10)
   fg <- c("black", "gray25", "gray40", "gray70")
   col.alert <- "darkred"
@@ -664,10 +668,9 @@ tsgui.intern <- function(currentClass,
  
    
   EntryChangesShort <- function(i, j, set=1, factor=3, value) {
-    if (islogical[[i]][j]) return;
+    if (islogical[[i]][j]) return();
     is.int <- isinteger[[i]][j]
-    name <- Names[i]
-    if (is.int) value <- as.integer(base::round(value))
+     if (is.int) value <- as.integer(base::round(value))
     s <- strictpos[[i]][j]
 
     if (missing(value)) stop("missing value in EntryChangesShort")
@@ -708,6 +711,12 @@ tsgui.intern <- function(currentClass,
       for (i in 1:2) first(set, changeEntry=FALSE)
     }
 
+    assign("wait.simulation", get("wait.simulation", envir=ENVIR) - 1 , envir=ENVIR)
+    if (get("wait.simulation", envir=ENVIR) < 0) {
+      name <- Names[i]
+      start_simu(update=name)
+      tkRreplot(imgLU)
+    }
     return(NULL)
   }
 
@@ -833,13 +842,15 @@ tsgui.intern <- function(currentClass,
     start.inno <-Value("starting.innovations")
     phi <- Value("phi")
     repet <- Value("repetitions")
-    col.idx <- (show - 1) * repet + (1:repet)
+    ## first distr all repetitions; second distr all repet, etc.
+    col.idx <- as.vector(outer(1:repet, (show - 1) * repet,  "+")) 
     inno <- innovations[, col.idx, drop=FALSE]
     burn.in <- Value("burn.in")
     ntime <- Value("time")
     burn.in <- Value("burn.in")
     row.idx.inno <- nrow(inno) + 1 - (ntime:1)
     start.ts.matrix <- L$starting.matrix.ts(repet, ls, start.ts)
+##    Print(start.ts.matrix, start.inno, repet, ls, start.ts, show)
     row.idx.ts <- function(M) nrow(M) + 1 - (ntime:1)
     stopifnot(all(row.idx.inno > 0))
     
@@ -863,6 +874,7 @@ tsgui.intern <- function(currentClass,
 
     lty <- rep(show, each=repet)
     pch <- 1:repet
+   # Print(col.idx, pch, lty)
     if (simple.repet <- length(s.sets)==1 &&
 	xor(repet > 1, ls > 1))
       rbcol <- c(colour, rainbow(repet * show))[1:(repet * ls)]
@@ -1075,8 +1087,11 @@ tsgui.intern <- function(currentClass,
     Delete(X <- entryValue(i, j, set))
     if (isinteger[[i]][j]) value <- as.integer(round(value))
     assign(X, tkVar(value), envir=ENVIR)
+  #  text <- paste("function(...) EntryChanges(i=", i, ", j=", j,
+#		  ", set=", set, ")")
     text <- paste("function(...) EntryChanges(i=", i, ", j=", j,
-		  ", set=", set, ")")
+		  ", set=", set, ");"
+		  )
     Delete(X <- entryWidget(i, j, set))
     assign(X, tkEntry(tt, width=width.entry, borderwidth=1,
 		      selectborderwidth=1,
@@ -1171,6 +1186,7 @@ tsgui.intern <- function(currentClass,
 
 
   main <- function() {
+    cat("opening a new window ...")
     assign("sets", c(TRUE, rep(FALSE, max.sets - 1)), envir=ENVIR)
     setClassLists(currentClass)
     tt <- tcltk::tktoplevel()
@@ -1178,7 +1194,7 @@ tsgui.intern <- function(currentClass,
     tcltk::tkwm.protocol(tt, "WM_DELETE_WINDOW", OnReturn)
     ##  tkGrid(tkLabel(tt, text="", width=1, height=0), column=0, row=0)
     tkGrid(tkLabel(tt, text="", width=1), column=fst.col+image.colspan,row=1)
-    tkGrid(tkLabel(tt, text="BB", width=1), column=snd.col+image.colspan,row=1)
+    tkGrid(tkLabel(tt, text="", width=1), column=snd.col+image.colspan,row=1)
     tkGrid(tkLabel(tt, text="", width=1), column=col.sl+image.colspan, row=1)
     ##
     assign("col_bg", tkValue(tcltk::tkcget(tt, "-bg")), envir=ENVIR)
@@ -1224,7 +1240,7 @@ tsgui.intern <- function(currentClass,
     assign("imgLU", envir = ENVIR,
 	   tkPlot(tt, 
 		  fun = plotSimulation,
-		  hscale=2 * plothscale, vscale=2 * plotvscale))
+		  hscale=plothscale, vscale=plotvscale))
     starting.values()
     start_simu(all=TRUE)
         

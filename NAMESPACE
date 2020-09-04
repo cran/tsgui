@@ -1,5 +1,5 @@
 
-#exportPattern("^[^\\.]")
+###exportPattern("^[^\\.]")
 export(tsgui, ARMA.model, GARCH.model)
 
 
